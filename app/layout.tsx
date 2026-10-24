@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,40 +8,28 @@ export const metadata: Metadata = {
   description: "Un club, quatre dimensions. GROW, CONNECT, EXPERIENCE, IMPACT.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className="relative min-h-screen bg-[#0F172A] flex flex-col">
+      <body className="relative min-h-screen bg-[#1B2550] text-white flex flex-col overflow-x-hidden">
         
-        {/* 1. L'IMAGE DE FOND (la chouette) */}
         <div 
           className="fixed inset-0 -z-20 pointer-events-none"
           style={{ 
-            backgroundImage: "url('/background-logo.png')",
-            backgroundSize: "cover",
+            backgroundImage: "url('/logo-estk.png')",
+            backgroundSize: "80%",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            opacity: 0.15, 
-            filter: "blur(1px)" 
+            opacity: 0.03,
           }}
         />
 
-        {/* 2. UN VOILE DÉGRADÉ (pour que le texte soit lisible) */}
-        <div className="fixed inset-0 -z-10 bg-gradient-to-b from-slate-900/80 via-slate-900/60 to-slate-900/90 pointer-events-none" />
+        <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a3875] via-[#1B2550] to-[#1B2550] opacity-80 pointer-events-none" />
 
-        {/* 3. LA NAVBAR */}
         <Navbar />
-
-        {/* 4. LE CONTENU */}
-        <main className="relative z-10 flex-grow pt-8">
+        <main className="relative z-10 flex-grow">
           {children}
         </main>
-
-        {/* 5. LE FOOTER */}
         <Footer />
         
       </body>

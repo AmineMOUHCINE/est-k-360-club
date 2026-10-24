@@ -1,68 +1,79 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, Briefcase, Users, Star, HeartHandshake } from "lucide-react";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       
-      {/* Hero Section */}
-      <section className="relative py-24 px-6 text-center">
-        <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-lg p-12 rounded-[3rem] shadow-2xl border border-white/20">
-          <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">
+      <section className="relative pt-32 pb-20 px-6 max-w-7xl mx-auto">
+        <div className="flex flex-col items-start gap-6 max-w-4xl">
+          <span className="text-[#10B981] font-semibold tracking-widest uppercase text-sm border border-[#10B981]/30 px-4 py-2 rounded-full bg-[#10B981]/10">
             EST-K 360 CLUB
           </span>
-          <h1 className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 tracking-tight text-slate-900">
-            Un club, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-emerald-500">quatre dimensions.</span>
+          
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white">
+            Un club, <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#10B981] to-blue-400">
+              quatre dimensions.
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-700 mb-10 max-w-2xl mx-auto font-medium">
+          
+          <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-light mt-4">
             Grandir dans sa carrière, se lier aux autres, vivre des souvenirs, et agir pour plus large que soi.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/rejoindre" className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 shadow-lg">
+
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <Link href="/rejoindre" className="bg-[#10B981] text-[#1B2550] px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-400 hover:scale-105 transition-all flex items-center justify-center gap-2">
               Rejoindre le club <ArrowRight size={20} />
             </Link>
-            <Link href="/le-club" className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 px-8 py-4 rounded-full font-bold transition-all shadow-sm">
+            <Link href="/le-club" className="bg-white/5 border border-white/10 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition-all">
               Découvrir le club
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Section 4 Pôles */}
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-12 bg-white/90 backdrop-blur-sm inline-block px-8 py-4 rounded-3xl mx-auto border border-white/20 shadow-lg">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Nos 4 Pôles</h2>
-          <p className="text-slate-600">Quatre dimensions complémentaires pour une expérience à 360°.</p>
+      <section className="py-20 px-6 max-w-7xl mx-auto">
+        <div className="mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Nos 4 Pôles</h2>
+          <p className="text-slate-400 text-lg">Quatre dimensions complémentaires pour une expérience à 360°.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* GROW */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
-            <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6"><Briefcase size={28} /></div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">GROW</h3>
-            <p className="text-sm font-semibold text-emerald-600 mb-4">Compétences & Carrière</p>
-            <p className="text-slate-600 text-sm">Développement personnel, ateliers CV, préparation aux entretiens et opportunités.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all group">
+            <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Briefcase size={32} />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-3">GROW</h3>
+            <p className="text-emerald-400 font-medium mb-4">Compétences & Carrière</p>
+            <p className="text-slate-400 text-lg">Développement personnel, ateliers CV, préparation aux entretiens et opportunités professionnelles.</p>
           </div>
-          {/* CONNECT */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
-            <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6"><Users size={28} /></div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">CONNECT</h3>
-            <p className="text-sm font-semibold text-blue-600 mb-4">Liens & Communauté</p>
-            <p className="text-slate-600 text-sm">Intégration, speed-friending, parrainage et création d'une communauté soudée.</p>
+
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all group">
+            <div className="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Users size={32} />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-3">CONNECT</h3>
+            <p className="text-blue-400 font-medium mb-4">Liens & Communauté</p>
+            <p className="text-slate-400 text-lg">Intégration, speed-friending, parrainage et création d'une communauté étudiante soudée.</p>
           </div>
-          {/* EXPERIENCE */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
-            <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6"><Star size={28} /></div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">EXPERIENCE</h3>
-            <p className="text-sm font-semibold text-amber-600 mb-4">Vie universitaire</p>
-            <p className="text-slate-600 text-sm">Movie Nights, EST Got Talent, tournois gaming, sorties et événements.</p>
+
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all group">
+            <div className="w-16 h-16 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Star size={32} />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-3">EXPERIENCE</h3>
+            <p className="text-purple-400 font-medium mb-4">Vie universitaire</p>
+            <p className="text-slate-400 text-lg">Movie Nights, EST Got Talent, tournois gaming, sorties et événements mémorables.</p>
           </div>
-          {/* IMPACT */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
-            <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6"><HeartHandshake size={28} /></div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">IMPACT</h3>
-            <p className="text-sm font-semibold text-rose-600 mb-4">Engagement social</p>
-            <p className="text-slate-600 text-sm">Bénévolat, collectes, actions environnementales et projets à impact local.</p>
+
+          <div className="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] hover:bg-white/10 transition-all group">
+            <div className="w-16 h-16 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <HeartHandshake size={32} />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-3">IMPACT</h3>
+            <p className="text-rose-400 font-medium mb-4">Engagement social</p>
+            <p className="text-slate-400 text-lg">Bénévolat, collectes, actions environnementales et projets à impact local.</p>
           </div>
         </div>
       </section>
