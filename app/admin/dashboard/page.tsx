@@ -32,6 +32,16 @@ export default function AdminDashboard() {
   const [loadingContent, setLoadingContent] = useState(true);
   const [savingContent, setSavingContent] = useState(false);
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/admin/login");
+      }
+    };
+    checkAuth();
+  }, [router]);
+
   async function fetchApps() {
     const { data } = await supabase
       .from("applications")
@@ -74,7 +84,6 @@ export default function AdminDashboard() {
     else alert("✅ Page " + pageName + " sauvegardée !");
   };
 
-  // 📥 FONCTION EXPORT EXCEL (Mzyana, Centrée, avec Logo et Couleurs)
   const downloadExcel = () => {
     if (apps.length === 0) return alert("Aucune candidature à télécharger.");
 
@@ -88,8 +97,6 @@ export default function AdminDashboard() {
           th { background-color: #1B2550; color: #ffffff; padding: 12px; border: 1px solid #cccccc; text-align: center; font-weight: bold; }
           td { padding: 10px; border: 1px solid #cccccc; color: #333333; text-align: center; }
           tr:nth-child(even) { background-color: #f8fafc; }
-          
-          /* Styles pour l'en-tête (Centré) */
           .header-container { text-align: center; margin-bottom: 30px; }
           .logo { width: 120px; height: 120px; margin-bottom: 10px; }
           .club-name { font-size: 28px; font-weight: bold; color: #1B2550; margin: 0; padding: 0; letter-spacing: 1px; }
@@ -97,14 +104,11 @@ export default function AdminDashboard() {
         </style>
       </head>
       <body>
-        
-        <!-- EN-TÊTE CENTRÉ -->
         <div class="header-container">
           <img src="logo-estk.png" class="logo" alt="Logo" />
           <div class="club-name">EST-K 360 CLUB</div>
           <div class="subtitle">Liste des Candidatures - ${new Date().toLocaleDateString("fr-FR")}</div>
         </div>
-
         <table>
           <thead>
             <tr>
@@ -154,7 +158,6 @@ export default function AdminDashboard() {
       </html>
     `;
 
-    // Téléchargement sous format .xls (Excel)
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -190,7 +193,12 @@ export default function AdminDashboard() {
         
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Tableau de Bord</h1>
-          <button onClick={() => router.push("/admin/login")} className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600">
+          <button onClick={async () => {
+              await supabase.auth.signOut();
+              router.push("/admin/login");
+            }} 
+            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+          >
             <LogOut size={18} /> Déconnexion
           </button>
         </div>
