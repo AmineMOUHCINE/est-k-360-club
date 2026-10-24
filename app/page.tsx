@@ -4,7 +4,8 @@ import { ArrowRight, Briefcase, Users, Star, HeartHandshake } from "lucide-react
 export default function Home() {
   return (
     <main className="min-h-screen">
-      {/* Hero Section - Carte blanche sur fond sombre */}
+      
+      {/* Hero Section */}
       <section className="relative py-24 px-6 text-center">
         <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-lg p-12 rounded-[3rem] shadow-2xl border border-white/20">
           <span className="text-sm font-bold tracking-widest text-blue-600 uppercase">
@@ -17,16 +18,10 @@ export default function Home() {
             Grandir dans sa carrière, se lier aux autres, vivre des souvenirs, et agir pour plus large que soi.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/rejoindre" 
-              className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 shadow-lg"
-            >
+            <Link href="/rejoindre" className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center justify-center gap-2 shadow-lg">
               Rejoindre le club <ArrowRight size={20} />
             </Link>
-            <Link 
-              href="/le-club" 
-              className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 px-8 py-4 rounded-full font-bold transition-all shadow-sm"
-            >
+            <Link href="/le-club" className="bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 px-8 py-4 rounded-full font-bold transition-all shadow-sm">
               Découvrir le club
             </Link>
           </div>
@@ -41,47 +36,37 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Carte GROW */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20 hover:scale-105 transition-transform">
-            <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-              <Briefcase size={28} />
-            </div>
+          {/* GROW */}
+          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
+            <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6"><Briefcase size={28} /></div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">GROW</h3>
             <p className="text-sm font-semibold text-emerald-600 mb-4">Compétences & Carrière</p>
             <p className="text-slate-600 text-sm">Développement personnel, ateliers CV, préparation aux entretiens et opportunités.</p>
           </div>
-
-          {/* Carte CONNECT */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20 hover:scale-105 transition-transform">
-            <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-              <Users size={28} />
-            </div>
+          {/* CONNECT */}
+          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
+            <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6"><Users size={28} /></div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">CONNECT</h3>
             <p className="text-sm font-semibold text-blue-600 mb-4">Liens & Communauté</p>
             <p className="text-slate-600 text-sm">Intégration, speed-friending, parrainage et création d'une communauté soudée.</p>
           </div>
-
-          {/* Carte EXPERIENCE */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20 hover:scale-105 transition-transform">
-            <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6">
-              <Star size={28} />
-            </div>
+          {/* EXPERIENCE */}
+          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
+            <div className="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6"><Star size={28} /></div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">EXPERIENCE</h3>
             <p className="text-sm font-semibold text-amber-600 mb-4">Vie universitaire</p>
             <p className="text-slate-600 text-sm">Movie Nights, EST Got Talent, tournois gaming, sorties et événements.</p>
           </div>
-
-          {/* Carte IMPACT */}
-          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20 hover:scale-105 transition-transform">
-            <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6">
-              <HeartHandshake size={28} />
-            </div>
+          {/* IMPACT */}
+          <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-white/20">
+            <div className="w-14 h-14 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6"><HeartHandshake size={28} /></div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">IMPACT</h3>
             <p className="text-sm font-semibold text-rose-600 mb-4">Engagement social</p>
             <p className="text-slate-600 text-sm">Bénévolat, collectes, actions environnementales et projets à impact local.</p>
           </div>
         </div>
       </section>
+
     </main>
   );
 }
