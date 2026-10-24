@@ -1,5 +1,7 @@
 ﻿import { supabase } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic"; // <-- LIGNE IMPORTANTE (pas de cache)
+
 export default async function Activites() {
   const { data } = await supabase
     .from("site_content")
