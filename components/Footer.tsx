@@ -22,7 +22,7 @@ export default function Footer() {
         {/* Ligne du milieu : Signature au centre */}
         <div className="border-t border-slate-800 pt-8 pb-8 flex flex-col items-center justify-center text-center">
           <p className="text-sm text-slate-400 mb-3">
-            Développé avec par <span className="text-emerald-400 font-bold text-lg">Amine MOUHCINE</span>
+            Développé par <span className="text-white font-bold text-lg">Amine MOUHCINE</span>
           </p>
           <div className="flex gap-4">
             <a 
