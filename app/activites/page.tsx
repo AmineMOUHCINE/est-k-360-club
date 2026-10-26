@@ -1,8 +1,12 @@
 ﻿import { supabase } from "@/lib/supabase";
+import { unstable_noStore as noStore } from "next/cache";
 
-export const dynamic = "force-dynamic"; // <-- LIGNE IMPORTANTE (pas de cache)
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Activites() {
+  noStore(); // Hada kaygol l Next.js: ma t7fedch l'page f l'cache
+
   const { data } = await supabase
     .from("site_content")
     .select("title, content")

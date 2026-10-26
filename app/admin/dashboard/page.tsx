@@ -2,21 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, CheckCircle, XCircle, Clock, Users, Save, Edit3, Download, Eye, X } from "lucide-react";
+import { LogOut, CheckCircle, XCircle, Clock, Users, Save, Edit3, Download, Eye, X, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 type Application = {
-  id: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  telephone: string;
-  filiere: string;
-  niveau: string;
-  pole: string;
-  motivation: string;
-  status: string;
-  created_at: string;
+  id: string; nom: string; prenom: string; email: string; telephone: string;
+  filiere: string; niveau: string; pole: string; motivation: string; status: string; created_at: string;
 };
 
 export default function AdminDashboard() {
@@ -35,18 +26,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push("/admin/login");
-      }
+      if (!session) router.push("/admin/login");
     };
     checkAuth();
   }, [router]);
 
   async function fetchApps() {
-    const { data } = await supabase
-      .from("applications")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data } = await supabase.from("applications").select("*").order("created_at", { ascending: false });
     setApps(data || []);
     setLoadingApps(false);
   }
@@ -62,10 +48,7 @@ export default function AdminDashboard() {
     setLoadingContent(false);
   }
 
-  useEffect(() => {
-    fetchApps();
-    fetchContent();
-  }, []);
+  useEffect(() => { fetchApps(); fetchContent(); }, []);
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("applications").update({ status }).eq("id", id);
@@ -73,20 +56,27 @@ export default function AdminDashboard() {
     else alert("Erreur : " + error.message);
   };
 
+  // ⚠️ FONCTION JDIDA DYAL SUPPRESSION
+  const deleteApp = async (id: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer définitivement cette candidature ?")) return;
+    const { error } = await supabase.from("applications").delete().eq("id", id);
+    if (!error) fetchApps();
+    else alert("Erreur lors de la suppression : " + error.message);
+  };
+
   const saveContent = async (pageName: string, title: string, content: string) => {
     setSavingContent(true);
-    const { error } = await supabase
-      .from("site_content")
+    const { data, error } = await supabase.from("site_content")
       .update({ title, content, updated_at: new Date().toISOString() })
-      .eq("page_name", pageName);
+      .eq("page_name", pageName).select();
     setSavingContent(false);
-    if (error) alert("Erreur : " + error.message);
-    else alert("✅ Page " + pageName + " sauvegardée !");
+    if (error) alert("Erreur Supabase : " + error.message);
+    else if (!data || data.length === 0) alert("❌ Échec : La page '" + pageName + "' n'existe pas dans la base.");
+    else alert("✅ Succès : Page " + pageName + " sauvegardée !");
   };
 
   const downloadExcel = () => {
     if (apps.length === 0) return alert("Aucune candidature à télécharger.");
-
     let html = `
       <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
       <head>
@@ -112,60 +102,31 @@ export default function AdminDashboard() {
         <table>
           <thead>
             <tr>
-              <th>Nom & Prénom</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Filière</th>
-              <th>Niveau</th>
-              <th>Pôle</th>
-              <th>Statut</th>
-              <th>Date d'inscription</th>
+              <th>Nom & Prénom</th><th>Email</th><th>Téléphone</th><th>Filière</th>
+              <th>Niveau</th><th>Pôle</th><th>Statut</th><th>Date d'inscription</th>
             </tr>
           </thead>
           <tbody>
     `;
-
     apps.forEach((a) => {
-      const statusColors: Record<string, string> = {
-        en_attente: "color: #F59E0B; font-weight: bold;",
-        accepte: "color: #10B981; font-weight: bold;",
-        refuse: "color: #EF4444; font-weight: bold;",
-      };
-      const statusLabels: Record<string, string> = {
-        en_attente: "En attente",
-        accepte: "Accepté",
-        refuse: "Refusé",
-      };
-
+      const statusColors: Record<string, string> = { en_attente: "color: #F59E0B; font-weight: bold;", accepte: "color: #10B981; font-weight: bold;", refuse: "color: #EF4444; font-weight: bold;" };
+      const statusLabels: Record<string, string> = { en_attente: "En attente", accepte: "Accepté", refuse: "Refusé" };
       html += `
         <tr>
-          <td>${a.nom} ${a.prenom}</td>
-          <td>${a.email}</td>
-          <td>${a.telephone}</td>
-          <td>${a.filiere}</td>
-          <td>${a.niveau}</td>
-          <td>${a.pole}</td>
+          <td>${a.nom} ${a.prenom}</td><td>${a.email}</td><td>${a.telephone}</td>
+          <td>${a.filiere}</td><td>${a.niveau}</td><td>${a.pole}</td>
           <td style="${statusColors[a.status] || ""}">${statusLabels[a.status] || a.status}</td>
           <td>${new Date(a.created_at).toLocaleDateString("fr-FR")}</td>
         </tr>
       `;
     });
-
-    html += `
-          </tbody>
-        </table>
-      </body>
-      </html>
-    `;
-
+    html += `</tbody></table></body></html>`;
     const blob = new Blob([html], { type: "application/vnd.ms-excel" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = `Candidatures_ESTK360_${new Date().toISOString().split("T")[0]}.xls`;
-    document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
   };
 
   const stats = {
@@ -193,12 +154,7 @@ export default function AdminDashboard() {
         
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Tableau de Bord</h1>
-          <button onClick={async () => {
-              await supabase.auth.signOut();
-              router.push("/admin/login");
-            }} 
-            className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
-          >
+          <button onClick={async () => { await supabase.auth.signOut(); router.push("/admin/login"); }} className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600">
             <LogOut size={18} /> Déconnexion
           </button>
         </div>
@@ -248,12 +204,9 @@ export default function AdminDashboard() {
                   <table className="w-full text-sm">
                     <thead className="bg-slate-100 text-slate-700">
                       <tr>
-                        <th className="p-3 text-left">Nom</th>
-                        <th className="p-3 text-left">Email</th>
-                        <th className="p-3 text-left">Filière</th>
-                        <th className="p-3 text-left">Pôle</th>
-                        <th className="p-3 text-left">Statut</th>
-                        <th className="p-3 text-left">Actions</th>
+                        <th className="p-3 text-left">Nom</th><th className="p-3 text-left">Email</th>
+                        <th className="p-3 text-left">Filière</th><th className="p-3 text-left">Pôle</th>
+                        <th className="p-3 text-left">Statut</th><th className="p-3 text-left">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="text-slate-900">
@@ -268,6 +221,8 @@ export default function AdminDashboard() {
                             <button onClick={() => updateStatus(a.id, "accepte")} className="bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-emerald-600">Accepter</button>
                             <button onClick={() => updateStatus(a.id, "refuse")} className="bg-rose-500 text-white px-3 py-1 rounded-lg text-xs hover:bg-rose-600">Refuser</button>
                             <button onClick={() => setSelectedApp(a)} className="bg-slate-700 text-white px-3 py-1 rounded-lg text-xs hover:bg-slate-800 flex items-center gap-1"><Eye size={12} /> Détails</button>
+                            {/* ⚠️ BOUTON JDID DYAL SUPPRESSION */}
+                            <button onClick={() => deleteApp(a.id)} className="bg-red-700 text-white px-3 py-1 rounded-lg text-xs hover:bg-red-800 flex items-center gap-1"><Trash2 size={12} /> Supprimer</button>
                           </td>
                         </tr>
                       ))}
@@ -322,9 +277,7 @@ export default function AdminDashboard() {
       {selectedApp && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 relative">
-            <button onClick={() => setSelectedApp(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-800">
-              <X size={24} />
-            </button>
+            <button onClick={() => setSelectedApp(null)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-800"><X size={24} /></button>
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Détails du Candidat</h2>
             <div className="space-y-4 text-slate-700">
               <p><strong>Nom :</strong> {selectedApp.nom} {selectedApp.prenom}</p>
