@@ -46,15 +46,26 @@ const poles = [
   },
 ];
 
-function PoleCard({ pole, i, n, progressPerCard, scrollYProgress }: {
-  pole: any; i: number; n: number; progressPerCard: number; scrollYProgress: MotionValue<number>;
+// ✅ FIX: n3tiw l'isActive type dyal number
+function ProgressDot({ i, n, progress }: { i: number; n: number; progress: MotionValue<number> }) {
+  const isActive = useTransform(progress, (v): number => {
+    const idx = Math.min(Math.floor(v * n + 0.3), n - 1);
+    return idx === i ? 1 : 0;
+  });
+  const bg = useTransform(isActive, [0, 1], ["rgba(255,255,255,0.2)", "rgb(52,211,153)"]);
+  const scale = useTransform(isActive, [0, 1], [1, 1.6]);
+  return <motion.div style={{ backgroundColor: bg, scale }} className="w-2 h-2 rounded-full" />;
+}
+
+function PoleCard({ pole, i, n, progress }: {
+  pole: any; i: number; n: number; progress: MotionValue<number>;
 }) {
   const Icon = pole.icon;
+  const progressPerCard = 1 / n;
   const cardStart = i * progressPerCard;
   const cardEnd = (i + 1) * progressPerCard;
 
-  const y = useTransform(scrollYProgress, (v) => {
-    if (i === 0 && v <= cardEnd) return 0;
+  const y = useTransform(progress, (v) => {
     if (v < cardStart) return 800;
     if (v < cardEnd) {
       const slideProgress = (v - cardStart) / progressPerCard;
@@ -64,16 +75,15 @@ function PoleCard({ pole, i, n, progressPerCard, scrollYProgress }: {
     return -(n - i - 1) * 25 * Math.min(stackProgress, 1);
   });
 
-  const opacity = useTransform(scrollYProgress, (v) => {
-    if (i === 0) return 1;
+  const opacity = useTransform(progress, (v) => {
     if (v < cardStart) return 0;
     if (v < cardEnd) return (v - cardStart) / progressPerCard;
     return 1;
   });
 
   const endClamped = Math.min(cardEnd, 0.99);
-  const scale = useTransform(scrollYProgress, [endClamped, 1], [1, 1 - (n - i - 1) * 0.05]);
-  const rotate = useTransform(scrollYProgress, [endClamped, 1], [0, (n - i - 1) * 2]);
+  const scale = useTransform(progress, [endClamped, 1], [1, 1 - (n - i - 1) * 0.05]);
+  const rotate = useTransform(progress, [endClamped, 1], [0, (n - i - 1) * 2]);
 
   return (
     <motion.div style={{ y, opacity, scale, rotate, boxShadow: `0 0 80px ${pole.glow}`, zIndex: i + 1 }}
@@ -96,51 +106,33 @@ export default function NosPoles() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
   const n = poles.length;
-  const progressPerCard = 1 / n;
 
   return (
     <section ref={containerRef} style={{ height: `${n * 100}vh` }} className="relative bg-[#1B2550]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
         
-        {/* Anneaux rotatifs */}
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
           className="absolute w-[600px] h-[600px] md:w-[900px] md:h-[900px] border border-emerald-400/10 rounded-full pointer-events-none" />
         <motion.div animate={{ rotate: -360 }} transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
           className="absolute w-[450px] h-[450px] md:w-[650px] md:h-[650px] border border-emerald-400/5 rounded-full pointer-events-none" />
 
-        {/* Titre */}
         <div className="absolute top-10 md:top-16 left-1/2 -translate-x-1/2 z-30 text-center">
           <p className="text-emerald-400 font-semibold tracking-[0.3em] uppercase text-xs mb-2">Explorez</p>
           <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">Nos 4 Pôles</h1>
         </div>
 
-        {/* Progress dots */}
         <div className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
-          {poles.map((p, i) => {
-            const isActive = useTransform(scrollYProgress, (v) => {
-              const idx = Math.min(Math.floor(v / progressPerCard + 0.3), n - 1);
-              return idx === i ? 1 : 0;
-            });
-            return (
-              <motion.div key={p.name}
-                style={{
-                  backgroundColor: useTransform(isActive, [0, 1], ["rgba(255,255,255,0.2)", "rgb(52,211,153)"]),
-                  scale: useTransform(isActive, [0, 1], [1, 1.6]),
-                }}
-                className="w-2 h-2 rounded-full"
-              />
-            );
-          })}
-        </div>
-
-        {/* Cards */}
-        <div className="relative w-full max-w-4xl h-[500px] md:h-[600px] mx-auto px-6 z-10">
-          {poles.map((pole, i) => (
-            <PoleCard key={pole.name} pole={pole} i={i} n={n} progressPerCard={progressPerCard} scrollYProgress={scrollYProgress} />
+          {poles.map((p, i) => (
+            <ProgressDot key={p.name} i={i} n={n} progress={scrollYProgress} />
           ))}
         </div>
 
-        {/* Scroll hint */}
+        <div className="relative w-full max-w-4xl h-[500px] md:h-[600px] mx-auto px-6 z-10">
+          {poles.map((pole, i) => (
+            <PoleCard key={pole.name} pole={pole} i={i} n={n} progress={scrollYProgress} />
+          ))}
+        </div>
+
         <motion.p
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
