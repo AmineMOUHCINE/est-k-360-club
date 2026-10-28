@@ -1,45 +1,154 @@
-﻿import { Briefcase, Users, Star, HeartHandshake } from "lucide-react";
+﻿"use client";
+import { useScroll, useTransform, motion, MotionValue } from "framer-motion";
+import { useRef } from "react";
+import { Briefcase, Users, Star, HeartHandshake } from "lucide-react";
+
+const poles = [
+  {
+    icon: Briefcase, name: "GROW", subtitle: "Compétences & Carrière",
+    desc: "Développement personnel, ateliers CV, préparation aux entretiens et opportunités professionnelles.",
+    gradient: "from-emerald-500/30 via-emerald-900/30 to-[#0a0f1f]",
+    border: "border-emerald-400/40",
+    textColor: "text-emerald-400",
+    iconBg: "bg-emerald-500/20",
+    iconBorder: "border-emerald-400/30",
+    glow: "rgba(52,211,153,0.4)",
+  },
+  {
+    icon: Users, name: "CONNECT", subtitle: "Liens & Communauté",
+    desc: "Intégration, speed-friending, parrainage, team building et création d'une communauté étudiante soudée.",
+    gradient: "from-blue-500/30 via-blue-900/30 to-[#0a0f1f]",
+    border: "border-blue-400/40",
+    textColor: "text-blue-400",
+    iconBg: "bg-blue-500/20",
+    iconBorder: "border-blue-400/30",
+    glow: "rgba(96,165,250,0.4)",
+  },
+  {
+    icon: Star, name: "EXPERIENCE", subtitle: "Vie universitaire",
+    desc: "Movie Nights, EST Got Talent, tournois gaming, Quiz Nights, Escape Games, sorties et événements mémorables.",
+    gradient: "from-amber-500/30 via-amber-900/30 to-[#0a0f1f]",
+    border: "border-amber-400/40",
+    textColor: "text-amber-400",
+    iconBg: "bg-amber-500/20",
+    iconBorder: "border-amber-400/30",
+    glow: "rgba(251,191,36,0.4)",
+  },
+  {
+    icon: HeartHandshake, name: "IMPACT", subtitle: "Engagement social",
+    desc: "Bénévolat, collectes, actions environnementales, plantation d'arbres, soutien scolaire et projets à impact local.",
+    gradient: "from-rose-500/30 via-rose-900/30 to-[#0a0f1f]",
+    border: "border-rose-400/40",
+    textColor: "text-rose-400",
+    iconBg: "bg-rose-500/20",
+    iconBorder: "border-rose-400/30",
+    glow: "rgba(251,113,133,0.4)",
+  },
+];
+
+function PoleCard({ pole, i, n, progressPerCard, scrollYProgress }: {
+  pole: any; i: number; n: number; progressPerCard: number; scrollYProgress: MotionValue<number>;
+}) {
+  const Icon = pole.icon;
+  const cardStart = i * progressPerCard;
+  const cardEnd = (i + 1) * progressPerCard;
+
+  const y = useTransform(scrollYProgress, (v) => {
+    if (i === 0 && v <= cardEnd) return 0;
+    if (v < cardStart) return 800;
+    if (v < cardEnd) {
+      const slideProgress = (v - cardStart) / progressPerCard;
+      return 800 * (1 - slideProgress);
+    }
+    const stackProgress = (v - cardEnd) / Math.max(1 - cardEnd, 0.01);
+    return -(n - i - 1) * 25 * Math.min(stackProgress, 1);
+  });
+
+  const opacity = useTransform(scrollYProgress, (v) => {
+    if (i === 0) return 1;
+    if (v < cardStart) return 0;
+    if (v < cardEnd) return (v - cardStart) / progressPerCard;
+    return 1;
+  });
+
+  const endClamped = Math.min(cardEnd, 0.99);
+  const scale = useTransform(scrollYProgress, [endClamped, 1], [1, 1 - (n - i - 1) * 0.05]);
+  const rotate = useTransform(scrollYProgress, [endClamped, 1], [0, (n - i - 1) * 2]);
+
+  return (
+    <motion.div style={{ y, opacity, scale, rotate, boxShadow: `0 0 80px ${pole.glow}`, zIndex: i + 1 }}
+      className={`absolute inset-0 p-8 md:p-14 rounded-[2.5rem] bg-gradient-to-br ${pole.gradient} border ${pole.border} backdrop-blur-xl flex flex-col justify-between origin-top`}
+    >
+      <div>
+        <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 4, repeat: Infinity }}
+          className={`w-20 h-20 md:w-24 md:h-24 rounded-2xl ${pole.iconBg} border ${pole.iconBorder} flex items-center justify-center mb-6`}>
+          <Icon size={40} className={pole.textColor} />
+        </motion.div>
+        <h2 className="text-5xl md:text-7xl font-black text-white mb-3 tracking-tighter">{pole.name}</h2>
+        <p className={`text-lg md:text-xl ${pole.textColor} font-bold uppercase tracking-widest`}>{pole.subtitle}</p>
+      </div>
+      <p className="text-lg md:text-xl text-slate-200 leading-relaxed">{pole.desc}</p>
+    </motion.div>
+  );
+}
 
 export default function NosPoles() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const n = poles.length;
+  const progressPerCard = 1 / n;
+
   return (
-    <div className="max-w-6xl mx-auto py-24 px-6">
-      <div className="text-center mb-16">
-        {/* TITRE EN BLANC */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">Nos 4 Pôles</h1>
-        {/* SOUS-TITRE EN GRIS CLAIR */}
-        <p className="text-slate-200 max-w-2xl mx-auto text-lg">Quatre dimensions complémentaires pour une expérience à 360°.</p>
+    <section ref={containerRef} style={{ height: `${n * 100}vh` }} className="relative bg-[#1B2550]">
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+        
+        {/* Anneaux rotatifs */}
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[600px] h-[600px] md:w-[900px] md:h-[900px] border border-emerald-400/10 rounded-full pointer-events-none" />
+        <motion.div animate={{ rotate: -360 }} transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
+          className="absolute w-[450px] h-[450px] md:w-[650px] md:h-[650px] border border-emerald-400/5 rounded-full pointer-events-none" />
+
+        {/* Titre */}
+        <div className="absolute top-10 md:top-16 left-1/2 -translate-x-1/2 z-30 text-center">
+          <p className="text-emerald-400 font-semibold tracking-[0.3em] uppercase text-xs mb-2">Explorez</p>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">Nos 4 Pôles</h1>
+        </div>
+
+        {/* Progress dots */}
+        <div className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+          {poles.map((p, i) => {
+            const isActive = useTransform(scrollYProgress, (v) => {
+              const idx = Math.min(Math.floor(v / progressPerCard + 0.3), n - 1);
+              return idx === i ? 1 : 0;
+            });
+            return (
+              <motion.div key={p.name}
+                style={{
+                  backgroundColor: useTransform(isActive, [0, 1], ["rgba(255,255,255,0.2)", "rgb(52,211,153)"]),
+                  scale: useTransform(isActive, [0, 1], [1, 1.6]),
+                }}
+                className="w-2 h-2 rounded-full"
+              />
+            );
+          })}
+        </div>
+
+        {/* Cards */}
+        <div className="relative w-full max-w-4xl h-[500px] md:h-[600px] mx-auto px-6 z-10">
+          {poles.map((pole, i) => (
+            <PoleCard key={pole.name} pole={pole} i={i} n={n} progressPerCard={progressPerCard} scrollYProgress={scrollYProgress} />
+          ))}
+        </div>
+
+        {/* Scroll hint */}
+        <motion.p
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs uppercase tracking-widest text-emerald-400 font-semibold z-30"
+        >
+          ↓ Scroll
+        </motion.p>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Cartes (gardent leur fond blanc) */}
-        <div className="bg-white/95 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/20">
-          <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6"><Briefcase size={32} /></div>
-          <h2 className="text-2xl font-bold mb-2 text-slate-900">GROW</h2>
-          <p className="text-emerald-600 font-semibold mb-4">Compétences & Carrière</p>
-          <p className="text-slate-600">Ateliers CV et LinkedIn, préparation aux entretiens, prise de parole, leadership, langues, entrepreneuriat, rencontres professionnelles et conférences.</p>
-        </div>
-        
-        <div className="bg-white/95 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/20">
-          <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6"><Users size={32} /></div>
-          <h2 className="text-2xl font-bold mb-2 text-slate-900">CONNECT</h2>
-          <p className="text-blue-600 font-semibold mb-4">Liens & Communauté</p>
-          <p className="text-slate-600">Activités d'intégration, Coffee & Connect, speed-friending, parrainage, team building et rencontres entre filières.</p>
-        </div>
-        
-        <div className="bg-white/95 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/20">
-          <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6"><Star size={32} /></div>
-          <h2 className="text-2xl font-bold mb-2 text-slate-900">EXPERIENCE</h2>
-          <p className="text-amber-600 font-semibold mb-4">Vie universitaire & souvenirs</p>
-          <p className="text-slate-600">Movie Nights, EST Got Talent, tournois gaming, Quiz Nights, Escape Games, Paint & Chill, activités sportives et excursions.</p>
-        </div>
-        
-        <div className="bg-white/95 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white/20">
-          <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mb-6"><HeartHandshake size={32} /></div>
-          <h2 className="text-2xl font-bold mb-2 text-slate-900">IMPACT</h2>
-          <p className="text-rose-600 font-semibold mb-4">Engagement social</p>
-          <p className="text-slate-600">Bénévolat, collectes, actions environnementales, plantation d'arbres, soutien scolaire et projets à impact local.</p>
-        </div>
-      </div>
-    </div>
+    </section>
   );
 }
